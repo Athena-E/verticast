@@ -1,3 +1,16 @@
+Notes (Athena-E)
+- Android app, install Android studio
+
+```
+# rebuild app, use
+npx react-native run-android
+```
+```
+# run python backend
+python app.py
+```
+- check api endpoint address and react development server address and modify if necessary
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
