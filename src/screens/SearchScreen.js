@@ -53,7 +53,11 @@ const SearchScreen = ({navigation}) => {
   };
 
   const renderSearchResult = ({item}) => (
-    <SearchWidget location={item.name} temperature={30} />
+    <SearchWidget
+      location={item.name}
+      temperature={30}
+      navigation={navigation}
+    />
   );
 
   return (
@@ -80,7 +84,11 @@ const SearchScreen = ({navigation}) => {
           <View style={searchStyles.recLabelContainer}>
             <Text style={searchStyles.recLabel}>Recommended locations</Text>
           </View>
-          <SearchWidget temperature={14} location={'Ben Nevis'} />
+          <SearchWidget
+            temperature={14}
+            location={'Ben Nevis'}
+            navigation={navigation}
+          />
         </View>
       )}
       {isSearching && (

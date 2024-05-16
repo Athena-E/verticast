@@ -8,7 +8,7 @@ import HourlyWeatherDisplay from '../components/HourlyWeatherDisplay';
 // Home Screen page
 // TODO: will make this more general i.e. general weather display, not just Home Screen
 
-const HomeScreen = ({navigation}) => {
+const WeatherLocation = ({navigation}) => {
   // Structure: Date selector, Big temperature + location, Weather widgets, Hourly weather scrollbar
   return (
     <ImageBackground
@@ -58,4 +58,4 @@ const homeStyles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default WeatherLocation;

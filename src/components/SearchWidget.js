@@ -1,16 +1,29 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import styles from '../utils/styles';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Touchable,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 // Template for creating components
 
-const ComponentTemplate = ({temperature, location}) => {
-  const handleRecWidgetClick = () => {};
+const ComponentTemplate = ({temperature, location, navigation}) => {
+  const handleWidgetClick = () => {
+    navigation.navigate('WeatherLocation');
+  };
 
   return (
-    <TouchableOpacity style={favWidgetStyles.widgetContainer}>
-      <Text style={{marginRight: 10, fontSize: 40}}>{temperature}°</Text>
-      <Text style={{marginLeft: 20, fontSize: 30}}>{location}</Text>
+    <TouchableOpacity
+      style={favWidgetStyles.widgetContainer}
+      onPress={handleWidgetClick}>
+      <Text style={{fontSize: 40}}>{temperature}°</Text>
+      <Text style={{fontSize: 30}}>{location}</Text>
+      <TouchableOpacity>
+        <Icon name="add-circle-outline" size={40} color="#ffa70f" />
+      </TouchableOpacity>
     </TouchableOpacity>
   );
 };
@@ -18,6 +31,7 @@ const ComponentTemplate = ({temperature, location}) => {
 const favWidgetStyles = StyleSheet.create({
   widgetContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#fff',
     borderRadius: 10,
