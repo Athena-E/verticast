@@ -24,13 +24,8 @@ const SearchScreen = ({navigation}) => {
   const [filteredData, setFilteredData] = useState(SEARCHDATA);
   const textInputRef = useRef(null);
 
-  useEffect(() => {
-    console.log(searchQuery);
-  }, [searchQuery]);
-
   const handleSearch = text => {
     setSearchQuery(text);
-    console.log(text);
     const filtered = SEARCHDATA.filter(item =>
       item.name.toLowerCase().includes(text.toLowerCase()),
     );
@@ -79,31 +74,31 @@ const SearchScreen = ({navigation}) => {
           onFocus={handleOnSearch}
         />
       </View>
-      {!isSearching && (
-        <View style={searchStyles.recContainer}>
-          <View style={searchStyles.recLabelContainer}>
-            <Text style={searchStyles.recLabel}>Recommended locations</Text>
+      {
+        <View style={{flexDirection: 'row', flex: 1}}>
+          <View style={searchStyles.recContainer}>
+            <View style={searchStyles.recLabelContainer}>
+              <Text style={searchStyles.recLabel}>
+                {isSearching ? 'Search results' : 'Recommended locations'}
+              </Text>
+            </View>
+            {isSearching ? (
+              <FlatList
+                data={filteredData}
+                renderItem={renderSearchResult}
+                keyExtractor={item => item.id}
+                scrollEnabled={true}
+              />
+            ) : (
+              <SearchWidget
+                temperature={14}
+                location={'Ben Nevis'}
+                navigation={navigation}
+              />
+            )}
           </View>
-          <SearchWidget
-            temperature={14}
-            location={'Ben Nevis'}
-            navigation={navigation}
-          />
         </View>
-      )}
-      {isSearching && (
-        <View style={searchStyles.recContainer}>
-          <View style={searchStyles.recLabelContainer}>
-            <Text style={searchStyles.recLabel}>Search results</Text>
-          </View>
-          <FlatList
-            data={filteredData}
-            renderItem={renderSearchResult}
-            keyExtractor={item => item.id}
-            scrollEnabled={true}
-          />
-        </View>
-      )}
+      }
     </View>
   );
 };
@@ -115,7 +110,6 @@ const searchStyles = StyleSheet.create({
     backgroundColor: '#4abbe0',
   },
   searchBar: {
-    height: 60,
     borderColor: '#000',
     borderWidth: 2,
     paddingHorizontal: 10,
@@ -123,13 +117,14 @@ const searchStyles = StyleSheet.create({
     backgroundColor: '#fff',
     justifyContent: 'flex-start',
     flexDirection: 'row',
-    marginHorizontal: 30,
-    width: '90%',
+    marginHorizontal: 20,
+    alignSelf: 'stretch',
   },
   searchTextBox: {
     marginLeft: 11,
-    width: '85%',
     fontSize: 15,
+    flexDirection: 'row',
+    flex: 1,
   },
   searchButton: {
     justifyContent: 'center',
@@ -147,17 +142,13 @@ const searchStyles = StyleSheet.create({
   },
   recContainer: {
     flex: 1,
-    width: '90%',
+    alignItems: 'flex-start',
     marginTop: 20,
+    flexDirection: 'column',
+    marginHorizontal: 20,
   },
   recLabelContainer: {
-    width: '100%',
     marginBottom: 10,
-  },
-  searchContainer: {
-    flex: 1,
-    width: '100%',
-    marginTop: 20,
   },
 });
 

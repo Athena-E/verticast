@@ -39,11 +39,12 @@ const homeStyles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     paddingHorizontal: 30,
-    paddingVertical: 30,
+    paddingTop: 30,
+    paddingBottom: 10,
   },
   contentContainer: {
     flex: 1,
-    marginTop: 40,
+    marginTop: 30,
     alignItems: 'center',
   },
   background: {

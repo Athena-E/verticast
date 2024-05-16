@@ -16,7 +16,7 @@ const BigTemperatureLabel = ({temperature, placeName}) => {
   // api request
   const fetchTempData = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/data');
+      const response = await fetch('http://10.0.2.2:5000/api/data'); // MUST use 10.0.2.2 android localhost
       const responseData = await response.json();
       setTempData(responseData.temperature);
       console.log(tempData);

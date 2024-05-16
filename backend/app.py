@@ -5,7 +5,7 @@ import requests
 # temporary flask backend
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:8081"}})
+CORS(app)
 
 # api endpoint to send temperature and location data
 @app.route('/api/data', methods=['GET'])
