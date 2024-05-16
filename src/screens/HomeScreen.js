@@ -2,7 +2,6 @@
 
 import React from 'react';
 import {ImageBackground, View, StyleSheet} from 'react-native';
-import styles from '../utils/styles';
 import SingleWeatherWidget from '../components/SingleWeatherWidget';
 import BigTemperatureLabel from '../components/BigTemperatureLabel';
 import DateSelectorDisplay from '../components/DateSelectorDisplay';

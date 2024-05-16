@@ -15,17 +15,23 @@ const App = () => {
         <Tab.Screen
           name={'Favourites'}
           component={FavouritesScreen}
-          options={{tabBarIcon: () => <Icon name="star" size={30} />}}
+          options={{
+            tabBarIcon: () => <Icon name="star" size={30} color="#ffa70f" />,
+          }}
         />
         <Tab.Screen
           name={'Home'}
           component={HomeScreen}
-          options={{tabBarIcon: () => <Icon name="home" size={30} />}}
+          options={{
+            tabBarIcon: () => <Icon name="home" size={30} color="#000" />,
+          }}
         />
         <Tab.Screen
           name={'Search'}
           component={SearchScreen}
-          options={{tabBarIcon: () => <Icon name="search" size={30} />}}
+          options={{
+            tabBarIcon: () => <Icon name="search" size={30} color="#000" />,
+          }}
         />
       </Tab.Navigator>
     </NavigationContainer>

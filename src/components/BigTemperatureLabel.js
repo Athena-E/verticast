@@ -4,16 +4,19 @@ import {View, Text, StyleSheet} from 'react-native';
 // component for main temperature label on the main weather page
 
 const BigTemperatureLabel = ({temperature, placeName}) => {
+  // temporary variables for temperature and placeName to receive api response data
   const [tempData, setTempData] = useState(null);
   const [placeData, setPlaceData] = useState(null);
 
+  // called twice after render
   useEffect(() => {
     fetchTempData();
   }, []);
 
+  // api request
   const fetchTempData = async () => {
     try {
-      const response = await fetch('http://10.0.2.2:5000/api/data');
+      const response = await fetch('http://127.0.0.1:5000/api/data');
       const responseData = await response.json();
       setTempData(responseData.temperature);
       console.log(tempData);
