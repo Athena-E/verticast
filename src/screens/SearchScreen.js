@@ -21,7 +21,7 @@ const SEARCHDATA = [
 const SearchScreen = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  const [filteredData, setFilteredData] = useState(SEARCHDATA);
+  const [filteredData, setFilteredData] = useState([]);
   const textInputRef = useRef(null);
 
   const handleSearch = text => {
@@ -79,10 +79,12 @@ const SearchScreen = ({navigation}) => {
           <View style={searchStyles.recContainer}>
             <View style={searchStyles.recLabelContainer}>
               <Text style={searchStyles.recLabel}>
-                {isSearching ? 'Search results' : 'Recommended locations'}
+                {isSearching || searchQuery !== ''
+                  ? 'Search results'
+                  : 'Recommended locations'}
               </Text>
             </View>
-            {isSearching ? (
+            {isSearching || searchQuery !== '' ? (
               <FlatList
                 data={filteredData}
                 renderItem={renderSearchResult}

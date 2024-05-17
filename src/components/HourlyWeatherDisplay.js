@@ -41,7 +41,6 @@ const hourlyWeatherStyles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: 'rgba(149, 180, 230,0.5)',
     maxHeight: 110,
-    flexGrow: 1,
   },
   hourContainer: {
     padding: 10,
