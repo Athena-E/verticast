@@ -18,9 +18,9 @@ const FavWidget = ({navigation}) => {
         <View style={{flex: 1, flexDirection: 'row'}}>
           <View style={{width: '50%'}}>
             <View style={{marginRight: 15}}>
-              <Text style={{fontSize: 20, fontWeight: 'semibold'}}>Sunny</Text>
+              <Text style={{fontSize: 20, fontWeight: 'semibold'}}>Cloudy</Text>
               <Image
-                source={require('../assets/weather-icon.png')}
+                source={require('../assets/half-sun.png')}
                 resizeMode="contain"
                 style={favWidgetStyles.weatherImage}
               />
@@ -58,7 +58,7 @@ const favWidgetStyles = StyleSheet.create({
   widgetContainer: {
     flexDirection: 'column',
     width: '100%',
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(255, 250, 235, 0.9)',
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,
@@ -75,13 +75,12 @@ const favWidgetStyles = StyleSheet.create({
   weatherImage: {
     height: 95,
     width: 120,
-    backgroundColor: '#fff',
     alignSelf: 'center',
   },
   warningBox: {
     marginTop: 15,
     marginBottom: 8,
-    backgroundColor: '#ffd1a1',
+    backgroundColor: '#ff775c',
     borderRadius: 20,
     paddingHorizontal: 20,
     paddingVertical: 5,

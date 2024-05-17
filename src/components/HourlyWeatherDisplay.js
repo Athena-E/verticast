@@ -39,7 +39,7 @@ const hourlyWeatherStyles = StyleSheet.create({
   scrollContainer: {
     margin: 10,
     borderRadius: 10,
-    backgroundColor: 'rgba(149, 180, 230,0.5)',
+    backgroundColor: 'rgba(167, 178, 194, 0.6)',
     maxHeight: 110,
   },
   hourContainer: {

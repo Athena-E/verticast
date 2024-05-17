@@ -62,12 +62,21 @@ const DateSelectorDisplay = () => {
     <View style={DateStyles.container}>
       <TouchableOpacity onPress={goToPreviousDay}>
         <Icon name="arrow-back-circle" size={40} />
-        <Text>{formatShortDate(previousDate)}</Text>
+        <Text style={{fontFamily: 'Poppins-Medium'}}>
+          {formatShortDate(previousDate)}
+        </Text>
       </TouchableOpacity>
-      <Text style={DateStyles.label}>{formatLongDate(currentDate)}</Text>
+      <View style={{flexDirection: 'row'}}>
+        <Text style={DateStyles.label}>{formatLongDate(currentDate)}</Text>
+        <TouchableOpacity style={{marginLeft: 10}}>
+          <Icon name={'arrow-down-circle'} size={40} />
+        </TouchableOpacity>
+      </View>
       <TouchableOpacity onPress={goToNextDay}>
         <Icon name="arrow-forward-circle" size={40} />
-        <Text>{formatShortDate(nextDate)}</Text>
+        <Text style={{fontFamily: 'Poppins-Medium'}}>
+          {formatShortDate(nextDate)}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -85,7 +94,7 @@ const DateStyles = StyleSheet.create({
   },
   label: {
     fontSize: 30,
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-SemiBold',
   },
 });
 

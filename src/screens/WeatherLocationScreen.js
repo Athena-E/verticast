@@ -11,21 +11,46 @@ import BigTemperatureLabel from '../components/BigTemperatureLabel';
 import DateSelectorDisplay from '../components/DateSelectorDisplay';
 import HourlyWeatherDisplay from '../components/HourlyWeatherDisplay';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {useFavourites} from '../context/FavouriteContext';
 
 // Home Screen page
 // TODO: will make this more general i.e. general weather display, not just Home Screen
 
 const WeatherLocationScreen = ({navigation}) => {
   // Structure: Date selector, Big temperature + location, Weather widgets, Hourly weather scrollbar
+  const {favourites, addFavourite, removeFavourite} = useFavourites();
+
   const onBackClick = () => {
     navigation.goBack();
   };
 
-  const onAddclick = () => {};
+  const onAddclick = () => {
+    addFavourite({id: 1, name: 'Ben Nevis'});
+  };
+
+  // const {locations} = useLocations();
+  // const [weatherData, setWeatherData] = useState([]);
+  //
+  // useEffect(() => {
+  //   const fetchWeatherData = async () => {
+  //     const data = await Promise.all(
+  //       locations.map(async location => {
+  //         const response = await fetch(
+  //           `https://api.weatherapi.com/v1/current.json?key=YOUR_API_KEY&q=${location.name}`,
+  //         );
+  //         const result = await response.json();
+  //         return {...location, weather: result};
+  //       }),
+  //     );
+  //     setWeatherData(data);
+  //   };
+
+  //   fetchWeatherData();
+  // }, [locations]);
 
   return (
     <ImageBackground
-      source={require('../assets/mountain-vector-background.webp')}
+      source={require('../assets/snow-background2.jpg')}
       style={homeStyles.background}>
       <View style={homeStyles.container}>
         <DateSelectorDisplay />
@@ -58,7 +83,9 @@ const WeatherLocationScreen = ({navigation}) => {
               />
               <Text style={{color: '#fff'}}>Back</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{alignItems: 'center'}}>
+            <TouchableOpacity
+              style={{alignItems: 'center'}}
+              onPress={onAddclick}>
               <Icon name="add-circle-outline" size={50} color="#ffa70f" />
               <Text style={{color: '#fff'}}>Add</Text>
             </TouchableOpacity>

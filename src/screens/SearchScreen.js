@@ -7,22 +7,28 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
+  ImageBase,
+  ImageBackground,
 } from 'react-native';
 import SearchWidget from '../components/SearchWidget';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {useLocations} from '../context/LocationsContext';
+import styles from '../utils/styles';
 
-const SEARCHDATA = [
-  {id: '1', name: 'Ben Nevis'},
-  {id: '2', name: 'Ben Ten'},
-  {id: '3', name: 'Ben Browning'},
-  {id: '4', name: 'Scaffel Pike'},
-];
+// const SEARCHDATA = [
+//   {id: '1', name: 'Ben Nevis'},
+//   {id: '2', name: 'Ben Ten'},
+//   {id: '3', name: 'Ben Browning'},
+//   {id: '4', name: 'Scaffel Pike'},
+// ];
 
 const SearchScreen = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
   const textInputRef = useRef(null);
+  const {locations} = useLocations();
+  const SEARCHDATA = locations;
 
   const handleSearch = text => {
     setSearchQuery(text);
@@ -52,56 +58,72 @@ const SearchScreen = ({navigation}) => {
       location={item.name}
       temperature={30}
       navigation={navigation}
+      style={searchStyles.widgetContainer}
     />
   );
 
   return (
-    <View style={searchStyles.contentContainer}>
-      <Text style={searchStyles.titleText}>Where would you like to go?</Text>
-      <View style={searchStyles.searchBar}>
-        <TouchableOpacity
-          style={searchStyles.searchButton}
-          onPress={handleSearchButtonPress}>
-          <Icon name="search" size={25} />
-        </TouchableOpacity>
-        <TextInput
-          ref={textInputRef}
-          style={searchStyles.searchTextBox}
-          placeholder={'Type here...'}
-          onChangeText={handleSearch}
-          value={searchQuery}
-          onBlur={handleOffSearch}
-          onFocus={handleOnSearch}
-        />
-      </View>
-      {
-        <View style={{flexDirection: 'row', flex: 1}}>
-          <View style={searchStyles.recContainer}>
-            <View style={searchStyles.recLabelContainer}>
-              <Text style={searchStyles.recLabel}>
-                {isSearching || searchQuery !== ''
-                  ? 'Search results'
-                  : 'Recommended locations'}
-              </Text>
-            </View>
-            {isSearching || searchQuery !== '' ? (
-              <FlatList
-                data={filteredData}
-                renderItem={renderSearchResult}
-                keyExtractor={item => item.id}
-                scrollEnabled={true}
-              />
-            ) : (
-              <SearchWidget
-                temperature={14}
-                location={'Ben Nevis'}
-                navigation={navigation}
-              />
-            )}
-          </View>
+    <ImageBackground
+      source={require('../assets/search-background.jpg')}
+      style={styles.background}>
+      <View style={searchStyles.contentContainer}>
+        <Text style={searchStyles.titleText}>Where would you like to go?</Text>
+        <View style={searchStyles.searchBar}>
+          <TouchableOpacity
+            style={{justifyContent: 'center'}}
+            onPress={handleSearchButtonPress}>
+            <Icon name="search" size={25} color={'#fff'} />
+          </TouchableOpacity>
+          <TextInput
+            ref={textInputRef}
+            style={searchStyles.searchTextBox}
+            placeholder={'Type here...'}
+            onChangeText={handleSearch}
+            value={searchQuery}
+            onBlur={handleOffSearch}
+            onFocus={handleOnSearch}
+            cursorColor={'#fff'}
+            placeholderTextColor={'#fff'}
+          />
         </View>
-      }
-    </View>
+        {
+          <View style={{flexDirection: 'row', flex: 1}}>
+            <View style={searchStyles.searchContainer}>
+              <View style={{marginBottom: 10}}>
+                <Text style={{fontSize: 20, fontWeight: 'bold'}}>
+                  {isSearching || searchQuery !== ''
+                    ? 'Search results'
+                    : 'Recommended locations'}
+                </Text>
+              </View>
+              {isSearching || searchQuery !== '' ? (
+                <View style={searchStyles.widgetContainer}>
+                  <FlatList
+                    data={filteredData}
+                    renderItem={renderSearchResult}
+                    keyExtractor={item => item.id}
+                    scrollEnabled={true}
+                    showsHorizontalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}
+                  />
+                </View>
+              ) : (
+                <View style={searchStyles.widgetContainer}>
+                  <FlatList
+                    data={filteredData}
+                    renderItem={renderSearchResult}
+                    keyExtractor={item => item.id}
+                    scrollEnabled={true}
+                    showsHorizontalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}
+                  />
+                </View>
+              )}
+            </View>
+          </View>
+        }
+      </View>
+    </ImageBackground>
   );
 };
 
@@ -109,14 +131,11 @@ const searchStyles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#4abbe0',
   },
   searchBar: {
-    borderColor: '#000',
-    borderWidth: 2,
     paddingHorizontal: 10,
     borderRadius: 30,
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(50, 47, 56, 0.6)',
     justifyContent: 'flex-start',
     flexDirection: 'row',
     marginHorizontal: 20,
@@ -124,33 +143,28 @@ const searchStyles = StyleSheet.create({
   },
   searchTextBox: {
     marginLeft: 11,
-    fontSize: 15,
+    fontSize: 18,
     flexDirection: 'row',
     flex: 1,
-  },
-  searchButton: {
-    justifyContent: 'center',
+    color: '#fff',
   },
   titleText: {
-    fontSize: 40,
+    fontSize: 35,
     textAlign: 'center',
     marginHorizontal: 50,
     marginVertical: 30,
-    fontWeight: 'semibold',
+    fontFamily: 'Poppins-MediumItalic',
   },
-  recLabel: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  recContainer: {
+  searchContainer: {
     flex: 1,
     alignItems: 'flex-start',
     marginTop: 20,
     flexDirection: 'column',
     marginHorizontal: 20,
   },
-  recLabelContainer: {
-    marginBottom: 10,
+  widgetContainer: {
+    flex: 1,
+    flexDirection: 'row',
   },
 });
 

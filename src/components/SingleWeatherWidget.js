@@ -26,7 +26,7 @@ const widgetStyles = StyleSheet.create({
   },
   widget: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(149, 180, 230,0.8)',
+    backgroundColor: 'rgba(167, 178, 194, 0.6)',
     borderRadius: 10,
     padding: 10,
     height: 120,

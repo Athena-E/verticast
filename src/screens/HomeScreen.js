@@ -4,16 +4,14 @@ import SingleWeatherWidget from '../components/SingleWeatherWidget';
 import BigTemperatureLabel from '../components/BigTemperatureLabel';
 import DateSelectorDisplay from '../components/DateSelectorDisplay';
 import HourlyWeatherDisplay from '../components/HourlyWeatherDisplay';
-
-// Home Screen page
-// TODO: will make this more general i.e. general weather display, not just Home Screen
+import styles from '../utils/styles';
 
 const HomeScreen = ({navigation}) => {
   // Structure: Date selector, Big temperature + location, Weather widgets, Hourly weather scrollbar
   return (
     <ImageBackground
-      source={require('../assets/mountain-vector-background.webp')}
-      style={homeStyles.background}>
+      source={require('../assets/light-background.jpg')}
+      style={styles.background}>
       <View style={homeStyles.container}>
         <DateSelectorDisplay />
         <View style={homeStyles.contentContainer}>
@@ -46,11 +44,6 @@ const homeStyles = StyleSheet.create({
     flex: 1,
     marginTop: 30,
     alignItems: 'center',
-  },
-  background: {
-    flex: 1,
-    resizeMode: 'cover',
-    justifyContent: 'center',
   },
   container: {
     flex: 1,
