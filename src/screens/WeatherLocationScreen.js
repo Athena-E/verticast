@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   ImageBackground,
   View,
@@ -13,19 +13,26 @@ import HourlyWeatherDisplay from '../components/HourlyWeatherDisplay';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useFavourites} from '../context/FavouriteContext';
 
-// Home Screen page
-// TODO: will make this more general i.e. general weather display, not just Home Screen
-
-const WeatherLocationScreen = ({navigation}) => {
+const WeatherLocationScreen = ({route, navigation}) => {
   // Structure: Date selector, Big temperature + location, Weather widgets, Hourly weather scrollbar
   const {favourites, addFavourite, removeFavourite} = useFavourites();
+  const {id, location} = route.params;
+  const [addedToFav, setAddedToFav] = useState(false);
 
   const onBackClick = () => {
     navigation.goBack();
   };
 
   const onAddclick = () => {
-    addFavourite({id: 1, name: 'Ben Nevis'});
+    if (!addedToFav) {
+      setAddedToFav(true);
+      console.log(id, location);
+      addFavourite(id);
+    } else {
+      setAddedToFav(false);
+      removeFavourite(id);
+    }
+    //addFavourite({id: 1, name: 'Ben Nevis'});
   };
 
   // const {locations} = useLocations();
@@ -50,12 +57,12 @@ const WeatherLocationScreen = ({navigation}) => {
 
   return (
     <ImageBackground
-      source={require('../assets/snow-background2.jpg')}
+      source={require('../assets/backgrounds/snow-background.jpg')}
       style={homeStyles.background}>
       <View style={homeStyles.container}>
         <DateSelectorDisplay />
         <View style={homeStyles.contentContainer}>
-          <BigTemperatureLabel temperature={20} placeName="Ben Nevis" />
+          <BigTemperatureLabel temperature={20} placeName={location} />
           <View style={homeStyles.widgetContainer}>
             <SingleWeatherWidget label="Wind Speed" value={10} unit="mph" />
             <SingleWeatherWidget label="Wind Direction" value="NNE" unit="" />
@@ -76,18 +83,22 @@ const WeatherLocationScreen = ({navigation}) => {
             <TouchableOpacity
               style={{alignItems: 'center'}}
               onPress={onBackClick}>
-              <Icon
-                name="arrow-back-circle-outline"
-                size={50}
-                color="#4099ff"
-              />
+              <Icon name="arrow-back-circle" size={50} color="#4099ff" />
               <Text style={{color: '#fff'}}>Back</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={{alignItems: 'center'}}
               onPress={onAddclick}>
-              <Icon name="add-circle-outline" size={50} color="#ffa70f" />
-              <Text style={{color: '#fff'}}>Add</Text>
+              {addedToFav ? (
+                <Icon name="close-circle" size={50} color="#322f38" />
+              ) : (
+                <Icon name="add-circle" size={50} color="#ffa70f" />
+              )}
+              {addedToFav ? (
+                <Text style={{color: '#fff'}}>Remove</Text>
+              ) : (
+                <Text style={{color: '#fff'}}>Add</Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>

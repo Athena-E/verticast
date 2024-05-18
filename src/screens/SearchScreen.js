@@ -6,21 +6,13 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
-  ScrollView,
-  ImageBase,
   ImageBackground,
 } from 'react-native';
 import SearchWidget from '../components/SearchWidget';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useLocations} from '../context/LocationsContext';
 import styles from '../utils/styles';
-
-// const SEARCHDATA = [
-//   {id: '1', name: 'Ben Nevis'},
-//   {id: '2', name: 'Ben Ten'},
-//   {id: '3', name: 'Ben Browning'},
-//   {id: '4', name: 'Scaffel Pike'},
-// ];
+import {useRecommended} from '../context/RecommendedContext';
 
 const SearchScreen = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -28,6 +20,7 @@ const SearchScreen = ({navigation}) => {
   const [filteredData, setFilteredData] = useState([]);
   const textInputRef = useRef(null);
   const {locations} = useLocations();
+  const {recLocations} = useRecommended();
   const SEARCHDATA = locations;
 
   const handleSearch = text => {
@@ -57,6 +50,7 @@ const SearchScreen = ({navigation}) => {
     <SearchWidget
       location={item.name}
       temperature={30}
+      id={item.id}
       navigation={navigation}
       style={searchStyles.widgetContainer}
     />
@@ -64,7 +58,7 @@ const SearchScreen = ({navigation}) => {
 
   return (
     <ImageBackground
-      source={require('../assets/search-background.jpg')}
+      source={require('../assets/backgrounds/search-background.jpg')}
       style={styles.background}>
       <View style={searchStyles.contentContainer}>
         <Text style={searchStyles.titleText}>Where would you like to go?</Text>
@@ -97,6 +91,7 @@ const SearchScreen = ({navigation}) => {
                 </Text>
               </View>
               {isSearching || searchQuery !== '' ? (
+                /*search results*/
                 <View style={searchStyles.widgetContainer}>
                   <FlatList
                     data={filteredData}
@@ -108,14 +103,17 @@ const SearchScreen = ({navigation}) => {
                   />
                 </View>
               ) : (
+                /*recommended locations*/
                 <View style={searchStyles.widgetContainer}>
                   <FlatList
-                    data={filteredData}
+                    data={recLocations}
                     renderItem={renderSearchResult}
                     keyExtractor={item => item.id}
                     scrollEnabled={true}
                     showsHorizontalScrollIndicator={false}
                     showsVerticalScrollIndicator={false}
+                    style={{flex: 1}}
+                    contentContainerStyle={{marginBottom: 20}}
                   />
                 </View>
               )}
@@ -165,6 +163,7 @@ const searchStyles = StyleSheet.create({
   widgetContainer: {
     flex: 1,
     flexDirection: 'row',
+    paddingBottom: 130,
   },
 });
 

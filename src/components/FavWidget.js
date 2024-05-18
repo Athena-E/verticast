@@ -1,10 +1,11 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 
-const FavWidget = ({navigation}) => {
+const FavWidget = ({navigation, location}) => {
   const handleWidgetClick = () => {
     navigation.navigate('Home');
   };
+
   return (
     <TouchableOpacity
       style={favWidgetStyles.widgetContainer}
@@ -20,7 +21,7 @@ const FavWidget = ({navigation}) => {
             <View style={{marginRight: 15}}>
               <Text style={{fontSize: 20, fontWeight: 'semibold'}}>Cloudy</Text>
               <Image
-                source={require('../assets/half-sun.png')}
+                source={require('../assets/symbols/cloudy.png')}
                 resizeMode="contain"
                 style={favWidgetStyles.weatherImage}
               />
@@ -31,7 +32,7 @@ const FavWidget = ({navigation}) => {
             <View style={{marginLeft: 20}}>
               <View style={{marginBottom: 0}}>
                 <Text style={{fontSize: 20, fontWeight: 'bold'}}>
-                  Ben Nevis
+                  {location}
                 </Text>
               </View>
               <View style={{marginBottom: 0}}>
@@ -63,8 +64,6 @@ const favWidgetStyles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginVertical: 5,
-    shadowColor: '#000',
-    elevation: 15,
   },
   verDivider: {
     height: '100%',
