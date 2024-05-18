@@ -11,9 +11,9 @@ CORS(app)
 @app.route('/api/data', methods=['GET'])
 def get_data():
     try:
-        # response = requests.get('')
+        # response = requests.get('url')
         # data = response.json()
-        data = {'temperature': 30, 'location': 'Not Ben Nevis'} # temporary data
+        data = {'temperature': 30, 'location': 'Not Ben Nevis', 'descr': 'sun'} # temporary data
         return jsonify(data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
