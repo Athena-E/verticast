@@ -15,5 +15,6 @@ export default StyleSheet.create({
     top: 0,
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
+    flex: 1,
   },
 });

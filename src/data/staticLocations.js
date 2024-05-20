@@ -1,3 +1,5 @@
+// list of locations indexed by id
+
 const staticLocations = [
   {
     id: 1,

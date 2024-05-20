@@ -8,12 +8,21 @@ import {createNativeStackNavigator} from 'react-native-screens/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import WeatherLocationScreen from '../screens/WeatherLocationScreen';
 
+// app navigator to handle navigation between screens
+
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 const TabNavigator = () => {
+  // bottom tab navigator
   return (
-    <Tab.Navigator initialRouteName={'Home'}>
+    <Tab.Navigator
+      initialRouteName={'Home'}
+      screenOptions={({route}) => ({
+        tabBarStyle: {
+          backgroundColor: '#fff',
+        },
+      })}>
       <Tab.Screen
         name={'Favourites'}
         component={FavouritesScreen}
@@ -40,6 +49,7 @@ const TabNavigator = () => {
 };
 
 const AppNavigator = () => {
+  // main app navigator implements tab navigation
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName={'Tabs'}>

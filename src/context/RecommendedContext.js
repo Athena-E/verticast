@@ -1,6 +1,9 @@
 import React, {createContext, useContext} from 'react';
 import {useLocations} from './LocationsContext';
 
+// hook to manage and share recommended locations for search screen
+// recommended locations displayed as default/when no results found
+
 const RecommendedContext = createContext();
 
 export const RecommendedProvider = ({children}) => {

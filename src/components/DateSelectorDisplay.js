@@ -1,11 +1,13 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {useNotification} from '../context/NotificationContext';
+import {sendDownloadReq} from '../data/api_req';
 
-// Component for selecting the date
-// TODO: limit number of days user can go back/forwards
+// Component for selecting the date on a location's weather page
+// Includes download button
 
-const DateSelectorDisplay = () => {
+const DateSelectorDisplay = ({buttonToScreenCom, isHome = true, location}) => {
   // initialise dates
   const [currentDate, setCurrentDate] = useState(new Date()); // today's date
   const [previousDate, setPreviousDate] = useState(() => {
@@ -18,6 +20,8 @@ const DateSelectorDisplay = () => {
     next.setDate(next.getDate() + 1);
     return next;
   }); // set tomorrow's date
+  const [isDownloaded, setIsDownloaded] = useState(false);
+  const {showNotification} = useNotification();
 
   const formatLongDate = date => {
     // return date as string unless current date is the same as today's date
@@ -58,8 +62,18 @@ const DateSelectorDisplay = () => {
     setNextDate(new Date(newNextDay));
   };
 
+  const onDownloadPress = () => {
+    // triggers dropdown notification
+    showNotification();
+    setIsDownloaded(!isDownloaded);
+    buttonToScreenCom('Weather data downloaded');
+    // sends API request to download location's weather data
+    sendDownloadReq(location);
+  };
+
   return (
     <View style={DateStyles.container}>
+      {/*Arrow to go back one day*/}
       <TouchableOpacity onPress={goToPreviousDay}>
         <Icon name="arrow-back-circle" size={40} />
         <Text style={{fontFamily: 'Poppins-Medium'}}>
@@ -67,11 +81,23 @@ const DateSelectorDisplay = () => {
         </Text>
       </TouchableOpacity>
       <View style={{flexDirection: 'row'}}>
+        {/*date label*/}
         <Text style={DateStyles.label}>{formatLongDate(currentDate)}</Text>
-        <TouchableOpacity style={{marginLeft: 10}}>
-          <Icon name={'arrow-down-circle'} size={40} />
-        </TouchableOpacity>
+        {/*download button*/}
+        {isHome && (
+          <TouchableOpacity
+            style={{marginLeft: 10}}
+            onPress={onDownloadPress}
+            disabled={isDownloaded}>
+            {isDownloaded ? (
+              <Icon name={'checkmark-circle'} size={40} />
+            ) : (
+              <Icon name={'arrow-down-circle'} size={40} />
+            )}
+          </TouchableOpacity>
+        )}
       </View>
+      {/*Arrow to go forward one day*/}
       <TouchableOpacity onPress={goToNextDay}>
         <Icon name="arrow-forward-circle" size={40} />
         <Text style={{fontFamily: 'Poppins-Medium'}}>

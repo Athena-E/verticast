@@ -1,11 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 
 // component for main temperature label on the main weather page
 
 const BigTemperatureLabel = ({temperature, placeName}) => {
-  // temporary variables for temperature and placeName to receive api response data
-
   return (
     <View style={TempStyles.container}>
       <Text style={TempStyles.value}>{temperature}°</Text>
@@ -18,12 +16,12 @@ const TempStyles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     alignItems: 'center',
-    marginBottom: 10,
   },
   label: {
     fontSize: 30,
     fontWeight: 'bold',
     color: '#000',
+    textAlign: 'center',
   },
   value: {
     fontSize: 100,

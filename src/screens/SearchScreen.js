@@ -7,12 +7,14 @@ import {
   TouchableOpacity,
   FlatList,
   ImageBackground,
+  Animated,
 } from 'react-native';
 import SearchWidget from '../components/SearchWidget';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useLocations} from '../context/LocationsContext';
 import styles from '../utils/styles';
 import {useRecommended} from '../context/RecommendedContext';
+import {useNotification} from '../context/NotificationContext';
 
 const SearchScreen = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -21,16 +23,27 @@ const SearchScreen = ({navigation}) => {
   const textInputRef = useRef(null);
   const {locations} = useLocations();
   const {recLocations} = useRecommended();
+  const {notificationVisible, showNotification, slideAnim} = useNotification();
   const SEARCHDATA = locations;
+  const [notificationText, setNotificationText] = useState('');
+  const [noResults, setNoResults] = useState(false);
+  const [notificationColour, setNotificationColour] = useState('#d1b152');
+
+  const widgetToScreenCom = (text, colour) => {
+    setNotificationText(text);
+    setNotificationColour(colour);
+  };
 
   const handleSearch = text => {
     setSearchQuery(text);
     const filtered = SEARCHDATA.filter(item =>
       item.name.toLowerCase().includes(text.toLowerCase()),
     );
-    if (text === '') {
+    if (text === '' || !filtered.length) {
+      setNoResults(true);
       return setFilteredData([]);
     }
+    setNoResults(false);
     setFilteredData(filtered);
   };
 
@@ -53,6 +66,7 @@ const SearchScreen = ({navigation}) => {
       id={item.id}
       navigation={navigation}
       style={searchStyles.widgetContainer}
+      widgetToScreenCom={widgetToScreenCom}
     />
   );
 
@@ -61,6 +75,26 @@ const SearchScreen = ({navigation}) => {
       source={require('../assets/backgrounds/search-background.jpg')}
       style={styles.background}>
       <View style={searchStyles.contentContainer}>
+        {/*notification dropdown*/}
+        {notificationVisible && (
+          <Animated.View
+            style={[
+              searchStyles.notification,
+              {
+                transform: [{translateY: slideAnim}],
+                backgroundColor: notificationColour,
+              },
+            ]}>
+            <Text
+              style={{
+                color: 'rgba(50, 47, 56, 1)',
+                fontSize: 20,
+                fontFamily: 'Poppins-Regular',
+              }}>
+              {notificationText}
+            </Text>
+          </Animated.View>
+        )}
         <Text style={searchStyles.titleText}>Where would you like to go?</Text>
         <View style={searchStyles.searchBar}>
           <TouchableOpacity
@@ -93,14 +127,55 @@ const SearchScreen = ({navigation}) => {
               {isSearching || searchQuery !== '' ? (
                 /*search results*/
                 <View style={searchStyles.widgetContainer}>
-                  <FlatList
-                    data={filteredData}
-                    renderItem={renderSearchResult}
-                    keyExtractor={item => item.id}
-                    scrollEnabled={true}
-                    showsHorizontalScrollIndicator={false}
-                    showsVerticalScrollIndicator={false}
-                  />
+                  {noResults && searchQuery !== '' ? (
+                    <View
+                      style={{
+                        flex: 1,
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          flexDirection: 'row',
+                          textAlign: 'center',
+                          marginTop: 30,
+                        }}>
+                        Sorry, we don't know where that is!
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          flexDirection: 'row',
+                          textAlign: 'left',
+                          marginTop: 20,
+                          paddingLeft: 10,
+                          fontWeight: 'bold',
+                          fontStyle: 'italic',
+                        }}>
+                        Explore recommended:
+                      </Text>
+                      <FlatList
+                        data={recLocations}
+                        renderItem={renderSearchResult}
+                        keyExtractor={item => item.id}
+                        scrollEnabled={true}
+                        showsHorizontalScrollIndicator={false}
+                        showsVerticalScrollIndicator={false}
+                        style={{flex: 1}}
+                        contentContainerStyle={{marginBottom: 50}}
+                      />
+                    </View>
+                  ) : (
+                    <FlatList
+                      data={filteredData}
+                      renderItem={renderSearchResult}
+                      keyExtractor={item => item.id}
+                      scrollEnabled={true}
+                      showsHorizontalScrollIndicator={false}
+                      showsVerticalScrollIndicator={false}
+                    />
+                  )}
                 </View>
               ) : (
                 /*recommended locations*/
@@ -163,7 +238,23 @@ const searchStyles = StyleSheet.create({
   widgetContainer: {
     flex: 1,
     flexDirection: 'row',
-    paddingBottom: 130,
+    paddingBottom: 0,
+    marginBottom: 140,
+    backgroundColor: 'rgba(255, 250, 235, 0.7)',
+    borderRadius: 10,
+  },
+  notification: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    borderRadius: 10,
+    margin: 10,
+    paddingVertical: 20,
+    // backgroundColor: '#ffb04f',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
   },
 });
 

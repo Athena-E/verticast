@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ImageBackground,
   View,
   StyleSheet,
   TouchableOpacity,
   Text,
+  Animated,
 } from 'react-native';
 import SingleWeatherWidget from '../components/SingleWeatherWidget';
 import BigTemperatureLabel from '../components/BigTemperatureLabel';
@@ -12,65 +13,110 @@ import DateSelectorDisplay from '../components/DateSelectorDisplay';
 import HourlyWeatherDisplay from '../components/HourlyWeatherDisplay';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useFavourites} from '../context/FavouriteContext';
+import {sendCurrentWeatherReq, sendHourlyWeatherReq} from '../data/api_req';
+import {weatherBackgrounds} from '../data/weatherCodes';
+import {useNotification} from '../context/NotificationContext';
 
 const WeatherLocationScreen = ({route, navigation}) => {
   // Structure: Date selector, Big temperature + location, Weather widgets, Hourly weather scrollbar
   const {favourites, addFavourite, removeFavourite} = useFavourites();
   const {id, location} = route.params;
   const [addedToFav, setAddedToFav] = useState(false);
+  const [backImgName, setBackImgName] = useState(
+    require('../assets/backgrounds/light-background.jpg'),
+  );
+  const [currentData, setCurrentData] = useState({
+    precipitation_probability: 44,
+    temperature_180m: 7,
+    visibility: 'High',
+    weather_code: 61,
+    wind_direction_180m: 'NW',
+    wind_speed_180m: 19,
+  }); // default data
+  const {notificationVisible, showNotification, slideAnim} = useNotification();
+  const [notificationText, setNotificationText] = useState('');
 
   const onBackClick = () => {
     navigation.goBack();
   };
 
   const onAddclick = () => {
-    if (!addedToFav) {
-      setAddedToFav(true);
-      console.log(id, location);
+    showNotification();
+    if (!favourites.some(obj => obj.id === id)) {
       addFavourite(id);
+      setNotificationText('Added to favourites!');
     } else {
-      setAddedToFav(false);
       removeFavourite(id);
+      setNotificationText('Removed from favourites!');
     }
-    //addFavourite({id: 1, name: 'Ben Nevis'});
   };
 
-  // const {locations} = useLocations();
-  // const [weatherData, setWeatherData] = useState([]);
-  //
-  // useEffect(() => {
-  //   const fetchWeatherData = async () => {
-  //     const data = await Promise.all(
-  //       locations.map(async location => {
-  //         const response = await fetch(
-  //           `https://api.weatherapi.com/v1/current.json?key=YOUR_API_KEY&q=${location.name}`,
-  //         );
-  //         const result = await response.json();
-  //         return {...location, weather: result};
-  //       }),
-  //     );
-  //     setWeatherData(data);
-  //   };
-
-  //   fetchWeatherData();
-  // }, [locations]);
+  useEffect(() => {
+    const sendCurrentDataWithAPI = async () => {
+      try {
+        const result = await sendCurrentWeatherReq(location);
+        if (!('error' in result)) {
+          setCurrentData(result);
+        }
+        // console.log('CURRENT DATA:', currentData);
+        setBackImgName(weatherBackgrounds[currentData.weather_code]);
+      } catch (err) {
+        console.log('send error', err.message);
+      }
+    };
+    sendCurrentDataWithAPI();
+  }, []);
 
   return (
-    <ImageBackground
-      source={require('../assets/backgrounds/snow-background.jpg')}
-      style={homeStyles.background}>
+    <ImageBackground source={backImgName} style={homeStyles.background}>
+      {/*notification dropdown*/}
+      {notificationVisible && (
+        <Animated.View
+          style={[
+            homeStyles.notification,
+            {transform: [{translateY: slideAnim}]},
+          ]}>
+          <Text
+            style={{
+              color: 'rgba(50, 47, 56, 1)',
+              fontSize: 20,
+              fontFamily: 'Poppins-Regular',
+            }}>
+            {notificationText}
+          </Text>
+        </Animated.View>
+      )}
       <View style={homeStyles.container}>
-        <DateSelectorDisplay />
+        <DateSelectorDisplay isHome={false} location={location} />
         <View style={homeStyles.contentContainer}>
-          <BigTemperatureLabel temperature={20} placeName={location} />
+          <BigTemperatureLabel
+            temperature={Math.round(currentData.temperature_180m)}
+            placeName={location}
+          />
           <View style={homeStyles.widgetContainer}>
-            <SingleWeatherWidget label="Wind Speed" value={10} unit="mph" />
-            <SingleWeatherWidget label="Wind Direction" value="NNE" unit="" />
-            <SingleWeatherWidget label="Visibility" value={'High'} unit="" />
-            <SingleWeatherWidget label="Precipitation" value={'25%'} unit="" />
+            <SingleWeatherWidget
+              label="Wind Speed"
+              value={Math.round(currentData.wind_speed_180m)}
+              unit="mph"
+            />
+            <SingleWeatherWidget
+              label="Wind Direction"
+              value={currentData.wind_direction_180m}
+              unit=""
+            />
+            <SingleWeatherWidget
+              label="Visibility"
+              value={currentData.visibility}
+              unit=""
+            />
+            <SingleWeatherWidget
+              label="Precipitation"
+              value={currentData.precipitation_probability}
+              unit="%"
+            />
           </View>
           <View>
-            <HourlyWeatherDisplay />
+            <HourlyWeatherDisplay location={location} />
           </View>
           <View
             style={{
@@ -89,12 +135,12 @@ const WeatherLocationScreen = ({route, navigation}) => {
             <TouchableOpacity
               style={{alignItems: 'center'}}
               onPress={onAddclick}>
-              {addedToFav ? (
+              {favourites.some(obj => obj.id === id) ? (
                 <Icon name="close-circle" size={50} color="#322f38" />
               ) : (
                 <Icon name="add-circle" size={50} color="#ffa70f" />
               )}
-              {addedToFav ? (
+              {favourites.some(obj => obj.id === id) ? (
                 <Text style={{color: '#fff'}}>Remove</Text>
               ) : (
                 <Text style={{color: '#fff'}}>Add</Text>
@@ -115,6 +161,7 @@ const homeStyles = StyleSheet.create({
     paddingHorizontal: 30,
     paddingTop: 30,
     paddingBottom: 10,
+    flex: 1,
   },
   contentContainer: {
     flex: 1,
@@ -130,6 +177,19 @@ const homeStyles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  notification: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    borderRadius: 10,
+    margin: 10,
+    paddingVertical: 20,
+    backgroundColor: '#ffb04f',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
   },
 });
 

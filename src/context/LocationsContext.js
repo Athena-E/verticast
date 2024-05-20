@@ -1,6 +1,8 @@
 import React, {createContext, useState, useContext, useEffect} from 'react';
 import staticLocations from '../data/staticLocations';
 
+// hook to manage and share location names
+
 const LocationsContext = createContext();
 
 export const LocationsProvider = ({children}) => {
