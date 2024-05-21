@@ -70,8 +70,9 @@ const FavWidget = ({
           justifyContent: 'space-between',
         }}>
         <View style={{flex: 1, flexDirection: 'row'}}>
+          {/*left column*/}
           <View style={{width: '50%'}}>
-            <View style={{marginRight: 15}}>
+            <View style={{marginRight: 15, flex: 1}}>
               <Text style={{fontSize: 20, fontWeight: 'semibold'}}>
                 {weatherCodes[currentData.weather_code]}
               </Text>
@@ -84,6 +85,7 @@ const FavWidget = ({
           </View>
           {/*vertical divider*/}
           <View style={favWidgetStyles.verDivider} />
+          {/*right column*/}
           <View style={{width: '50%'}}>
             <View style={{marginLeft: 20}}>
               {/*location name*/}
@@ -153,6 +155,8 @@ const favWidgetStyles = StyleSheet.create({
     height: 95,
     width: 120,
     alignSelf: 'center',
+    bottom: 0,
+    position: 'absolute',
   },
   warningBox: {
     marginTop: 15,

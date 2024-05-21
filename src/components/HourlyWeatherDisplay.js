@@ -31,7 +31,6 @@ const HourlyWeatherDisplay = ({isScreenFocused, location}) => {
         if (!('error' in result)) {
           setHourlyData(result);
         }
-        console.log('HOURLY:', location, hourlyData);
       } catch (err) {
         console.log('send error', err.message);
       }

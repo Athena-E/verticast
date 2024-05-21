@@ -1,4 +1,3 @@
-import re
 import openmeteo_requests
 import datetime
 from datetime import datetime as dt
@@ -6,32 +5,29 @@ from datetime import datetime as dt
 import requests_cache
 from retry_requests import retry
 import pandas as pd
-import json
 
 from os import listdir, remove
 from os.path import isfile, join
 
 import bisect
 
-place_list = None
+place_list = []
 download_path = "downloads/"
 
-low_vis_thresh = 1000
-med_vis_thresh = 5000
+LOW_VIS_THRESH = 1000
+MED_VIS_THRESH = 5000
 
-day = 60 * 60 * 24
-three_days = 60 * 60 * 24 * 3
+DAY = 60 * 60 * 24
+THREE_DAYS = 60 * 60 * 24 * 3
 
-# print(datetime.fromtimestamp(hours[0]).strftime('%Y-%m-%d %H:%M:%S'))
-# print(datetime.fromtimestamp(hours[10]).strftime('%Y-%m-%d %H:%M:%S'))
-
-hourly_params = ["precipitation_probability", "weather_code", "visibility", "wind_speed_180m", "wind_direction_180m",
+HOURLY_PARAMS = ["precipitation_probability", "weather_code", "visibility", "wind_speed_180m", "wind_direction_180m",
                  "temperature_180m"]
-hourly_params_indices = [2, 6]
-data_lookup = ["hours"] + hourly_params
+HOURLY_PARAMS_INDICES = [2, 6]
+DATA_LOOKUP = ["hours"] + HOURLY_PARAMS
 
 
 def convert_time(t):
+    # format time as 12-hour time
     now = dt.now()
     t = (int(t) + now.hour) % 24
     suffix = " AM" if t < 12 else " PM"
@@ -45,28 +41,27 @@ def convert_time(t):
 
 
 def convert_visibility(vis):
-    if vis < low_vis_thresh:
+    # categorise visibility as low, medium, high
+    if vis < LOW_VIS_THRESH:
         return "Low"
-    if vis < med_vis_thresh:
+    if vis < MED_VIS_THRESH:
         return "Medium"
     return "High"
 
 
-def convert_direction(dir):
-    i = int((int(dir) % 360) / 22.5 + 0.5)
+def convert_direction(direction):
+    # convert angle to compass direction
+    i = int((int(direction) % 360) / 22.5 + 0.5)
     lookup = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
     return lookup[i]
 
 
-class _Place():
+class _Place:
     def __init__(self, csvline):
         self.name, lt, lg = csvline.split(",")
         self.lat = float(lt)
         self.long = float(lg)
-        self.hourly_weather = None
-
-    def get_overview(self):
-        pass
+        self.hourly_weather = []
 
     def __eq__(self, string):
         return string == self.name
@@ -87,14 +82,14 @@ class _Place():
 
     def download(self):
         with open(download_path + self.get_filename(), "w") as file:
-            file.write(','.join(data_lookup) + "\n")
+            file.write(','.join(DATA_LOOKUP) + "\n")
             for i in range(len(self.hourly_weather[0])):
-                file.write(','.join([str(self.hourly_weather[j][i]) for j in range(len(data_lookup))]) + "\n")
+                file.write(','.join([str(self.hourly_weather[j][i]) for j in range(len(DATA_LOOKUP))]) + "\n")
 
     def load_weather_from_file(self):
         with open(download_path + self.get_filename()) as file:
             lines = file.read().split("\n")[1:]
-        data = [[] for _ in range(len(data_lookup))]
+        data = [[] for _ in range(len(DATA_LOOKUP))]
         for line in lines:
             for i, d in enumerate(line.split(",")):
                 if d == '':
@@ -115,7 +110,7 @@ def get_api_data(name):
     params = {
         "latitude": place.lat,
         "longitude": place.long,
-        "hourly": hourly_params,
+        "hourly": HOURLY_PARAMS,
         "timezone": "Europe/London",
         "past_days": 5
     }
@@ -149,7 +144,7 @@ def on_load():
             min_diff = float("inf")
             for ut in place.hourly_weather[0]:
                 min_diff = min(abs(now - ut), min_diff)
-            if min_diff > three_days:
+            if min_diff > THREE_DAYS:
                 remove(place.get_filename())
                 place.hourly_weather = None
     place_list.sort()
@@ -158,11 +153,10 @@ def on_load():
 def get_place(name):
     index = bisect.bisect_left(place_list, name)
     if index < 0 or index >= len(place_list):
-        print("aaaaaahhhhhh error")
-        return
+        return "error getting place name"
     place = place_list[bisect.bisect_left(place_list, name)]
     if place.name != name:
-        return "aaaaah"
+        return "error getting place name"
     return place
 
 
@@ -180,7 +174,7 @@ def get_formatted_hourly_weather(name):
         if day == today:
             data = {}
             data["time"] = ts.hour
-            for j,param in enumerate(hourly_params):
+            for j,param in enumerate(HOURLY_PARAMS):
                 data[param] = place.hourly_weather[j+1][i]
             hours_today.append(data)
     for dic in hours_today:
@@ -207,7 +201,7 @@ def get_current_weather(name):
         day = ts.day
         if hour == now_hour and day == today:
             data = {}
-            for j,param in enumerate(hourly_params):
+            for j,param in enumerate(HOURLY_PARAMS):
                 data[param] = place.hourly_weather[j+1][i]
             # just hourly params as keys
             data["visibility"] = convert_visibility(data["visibility"])
@@ -216,7 +210,7 @@ def get_current_weather(name):
             current_json = df.to_json(orient='records')
             current_obj = pd.read_json(current_json, orient='records').to_dict(orient='records')
             return current_obj[0]
-    print("aaaaaahhh errrooorrr")
+    print("error getting current weather")
 
 
 def download_from_name(name):
@@ -233,9 +227,7 @@ if __name__ == "__main__":
     #         bn = p
     #         break
     # a = get_formatted_hourly_weather("Ben Nevis")
-    # print(a)
     # b = get_current_weather("Ben Macdui")
-    # print(b)
     # get_api_data("Ben Nevis")
     # download_from_name('Ben Nevis')
     print('done')
