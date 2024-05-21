@@ -61,7 +61,7 @@ class _Place:
         self.name, lt, lg = csvline.split(",")
         self.lat = float(lt)
         self.long = float(lg)
-        self.hourly_weather = []
+        self.hourly_weather = None
 
     def __eq__(self, string):
         return string == self.name
@@ -228,6 +228,7 @@ if __name__ == "__main__":
     #         break
     # a = get_formatted_hourly_weather("Ben Nevis")
     # b = get_current_weather("Ben Macdui")
+    # print(b)
     # get_api_data("Ben Nevis")
     # download_from_name('Ben Nevis')
     print('done')

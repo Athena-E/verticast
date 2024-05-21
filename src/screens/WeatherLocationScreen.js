@@ -13,15 +13,16 @@ import DateSelectorDisplay from '../components/DateSelectorDisplay';
 import HourlyWeatherDisplay from '../components/HourlyWeatherDisplay';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useFavourites} from '../context/FavouriteContext';
-import {sendCurrentWeatherReq, sendHourlyWeatherReq} from '../data/api_req';
+import {sendCurrentWeatherReq} from '../data/api_req';
 import {weatherBackgrounds} from '../data/weatherCodes';
 import {useNotification} from '../context/NotificationContext';
+import {useFocusEffect} from '@react-navigation/native';
 
 const WeatherLocationScreen = ({route, navigation}) => {
   // Structure: Date selector, Big temperature + location, Weather widgets, Hourly weather scrollbar
   const {favourites, addFavourite, removeFavourite} = useFavourites();
   const {id, location} = route.params;
-  const [addedToFav, setAddedToFav] = useState(false);
+  const [isScreenFocused, setIsScreenFocused] = useState(false);
   const [backImgName, setBackImgName] = useState(
     require('../assets/backgrounds/light-background.jpg'),
   );
@@ -35,6 +36,30 @@ const WeatherLocationScreen = ({route, navigation}) => {
   }); // default data
   const {notificationVisible, showNotification, slideAnim} = useNotification();
   const [notificationText, setNotificationText] = useState('');
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const sendCurrentDataWithAPI = async () => {
+        try {
+          const result = await sendCurrentWeatherReq(location);
+          if (!('error' in result)) {
+            setCurrentData(result);
+          }
+          setBackImgName(weatherBackgrounds[currentData.weather_code]);
+          setNotificationText('');
+          //console.log('CURRENT DATA:', location, currentData); // log API response for debugging
+        } catch (err) {
+          console.log('send error', err.message);
+        }
+      };
+      setIsScreenFocused(true);
+      sendCurrentDataWithAPI();
+
+      return () => {
+        setIsScreenFocused(false);
+      };
+    }, [location]),
+  );
 
   const onBackClick = () => {
     navigation.goBack();
@@ -50,22 +75,6 @@ const WeatherLocationScreen = ({route, navigation}) => {
       setNotificationText('Removed from favourites!');
     }
   };
-
-  useEffect(() => {
-    const sendCurrentDataWithAPI = async () => {
-      try {
-        const result = await sendCurrentWeatherReq(location);
-        if (!('error' in result)) {
-          setCurrentData(result);
-        }
-        // console.log('CURRENT DATA:', currentData);
-        setBackImgName(weatherBackgrounds[currentData.weather_code]);
-      } catch (err) {
-        console.log('send error', err.message);
-      }
-    };
-    sendCurrentDataWithAPI();
-  }, []);
 
   return (
     <ImageBackground source={backImgName} style={homeStyles.background}>
@@ -116,7 +125,10 @@ const WeatherLocationScreen = ({route, navigation}) => {
             />
           </View>
           <View>
-            <HourlyWeatherDisplay location={location} />
+            <HourlyWeatherDisplay
+              isScreenFocused={isScreenFocused}
+              location={location}
+            />
           </View>
           <View
             style={{

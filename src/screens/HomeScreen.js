@@ -33,7 +33,6 @@ import ListWeatherData from '../components/ListWeatherData';
 
 const HomeScreen = () => {
   const {homeLocation} = useHomeLocation();
-  const [placeData, setPlaceData] = useState(homeLocation);
   const [backImgName, setBackImgName] = useState(
     require('../assets/backgrounds/light-background.jpg'),
   ); // set initial default background image
@@ -107,30 +106,36 @@ const HomeScreen = () => {
     ).start();
   }, [bobbingAnim]);
 
+  // trigger API request on screen focus
   useFocusEffect(
     React.useCallback(() => {
       const sendCurrentDataWithAPI = async () => {
         try {
-          setPlaceData(homeLocation);
-          const result = await sendCurrentWeatherReq(placeData);
+          const result = await sendCurrentWeatherReq(homeLocation);
           if (!('error' in result)) {
             setCurrentData(result);
           }
           setBackImgName(weatherBackgrounds[currentData.weather_code]);
-          //console.log('CURRENT DATA:', placeData, currentData); // log API response for debugging
+          setNotificationText('');
+          console.log('CURRENT DATA:', homeLocation, currentData); // log API response for debugging
         } catch (err) {
           console.log('send error', err.message);
         }
       };
-      startAtTop();
       setIsScreenFocused(true);
       sendCurrentDataWithAPI();
 
       return () => {
         setIsScreenFocused(false);
       };
-    }, [homeLocation, placeData]),
+    }, [homeLocation]),
   );
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     startAtTop();
+  //   }, []),
+  // );
 
   const buttonToScreenCom = text => {
     // button to trigger notification for downloads on DateSelector component
@@ -146,7 +151,7 @@ const HomeScreen = () => {
         ref={scrollViewRef}>
         <View style={homeStyles.container}>
           {/*notification dropdown*/}
-          {notificationVisible && (
+          {notificationVisible && notificationText !== '' && (
             <Animated.View
               style={[
                 homeStyles.notification,
@@ -164,7 +169,7 @@ const HomeScreen = () => {
           )}
           <DateSelectorDisplay
             buttonToScreenCom={buttonToScreenCom}
-            location={placeData}
+            location={homeLocation}
           />
           <View style={homeStyles.contentContainer}>
             <BigTemperatureLabel
@@ -197,7 +202,7 @@ const HomeScreen = () => {
             <View>
               <HourlyWeatherDisplay
                 isScreenFocused={isScreenFocused}
-                location={placeData}
+                location={homeLocation}
               />
             </View>
             <Animated.View

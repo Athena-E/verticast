@@ -9,18 +9,18 @@ import {weatherIcons} from '../data/weatherCodes';
 const HourlyWeatherDisplay = ({isScreenFocused, location}) => {
   // temporary mock data
   const hourlyDataTemp = [
-    {time: '12:00 PM', temperature_180m: '25', weather_code: 1},
-    {time: '01:00 PM', temperature_180m: '26', weather_code: 1},
-    {time: '02:00 PM', temperature_180m: '27', weather_code: 1},
-    {time: '03:00 PM', temperature_180m: '28', weather_code: 1},
-    {time: '04:00 PM', temperature_180m: '28', weather_code: 1},
-    {time: '05:00 PM', temperature_180m: '27', weather_code: 1},
-    {time: '06:00 PM', temperature_180m: '26', weather_code: 1},
-    {time: '07:00 PM', temperature_180m: '25', weather_code: 1},
-    {time: '08:00 PM', temperature_180m: '24', weather_code: 1},
-    {time: '09:00 PM', temperature_180m: '23', weather_code: 1},
-    {time: '10:00 PM', temperature_180m: '22', weather_code: 1},
-    {time: '11:00 PM', temperature_180m: '21', weather_code: 1},
+    {time: '12:00 PM', temperature_180m: '7', weather_code: 1},
+    {time: '01:00 PM', temperature_180m: '7', weather_code: 1},
+    {time: '02:00 PM', temperature_180m: '6', weather_code: 1},
+    {time: '03:00 PM', temperature_180m: '6', weather_code: 1},
+    {time: '04:00 PM', temperature_180m: '7', weather_code: 1},
+    {time: '05:00 PM', temperature_180m: '7', weather_code: 1},
+    {time: '06:00 PM', temperature_180m: '6', weather_code: 1},
+    {time: '07:00 PM', temperature_180m: '5', weather_code: 1},
+    {time: '08:00 PM', temperature_180m: '5', weather_code: 1},
+    {time: '09:00 PM', temperature_180m: '5', weather_code: 1},
+    {time: '10:00 PM', temperature_180m: '5', weather_code: 1},
+    {time: '11:00 PM', temperature_180m: '5', weather_code: 1},
   ];
   const [hourlyData, setHourlyData] = useState(hourlyDataTemp);
 

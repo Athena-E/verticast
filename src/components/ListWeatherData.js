@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, FlatList} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 
 // component for extra listed weather data on main weather page
 
@@ -26,13 +26,14 @@ const ListWeatherData = ({}) => {
     sunset: '9:00 PM',
     'air pollution': 'Low',
     'UV index': 'Moderate',
+    visibility: '1000 m',
   }; // temporary mock data
 
   return (
     <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
       <View style={widgetStyles.widgetContainer}>
         {Object.keys(extraData).map(key => (
-          <ListWidget label={key} value={extraData[key]} />
+          <ListWidget label={key} value={extraData[key]} key={key} />
         ))}
       </View>
     </View>

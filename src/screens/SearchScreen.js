@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,7 @@ import {useLocations} from '../context/LocationsContext';
 import styles from '../utils/styles';
 import {useRecommended} from '../context/RecommendedContext';
 import {useNotification} from '../context/NotificationContext';
+import {useFocusEffect} from '@react-navigation/native';
 
 const SearchScreen = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -28,6 +29,16 @@ const SearchScreen = ({navigation}) => {
   const [notificationText, setNotificationText] = useState('');
   const [noResults, setNoResults] = useState(false);
   const [notificationColour, setNotificationColour] = useState('#d1b152');
+
+  useFocusEffect(
+    // method to force re-render on screen focus
+    useCallback(() => {
+      setNotificationText('');
+      return () => {
+        setNotificationText('');
+      };
+    }, []),
+  );
 
   const widgetToScreenCom = (text, colour) => {
     setNotificationText(text);
@@ -76,7 +87,7 @@ const SearchScreen = ({navigation}) => {
       style={styles.background}>
       <View style={searchStyles.contentContainer}>
         {/*notification dropdown*/}
-        {notificationVisible && (
+        {notificationVisible && notificationText !== '' && (
           <Animated.View
             style={[
               searchStyles.notification,

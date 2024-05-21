@@ -50,6 +50,9 @@ A weather app targeted at climbers and mountaineers created for Android devices.
    - Select 'Medium Phone API 34' (Android 14.0)
    - Start the AVD.
 
+## APIs
+- Open-Meteo (https://open-meteo.com/)
+
 ## Libraries
 ### Core JavaScript Libraries
 - **React**: ^18.2.0
@@ -70,17 +73,5 @@ A weather app targeted at climbers and mountaineers created for Android devices.
    npx react-native-asset
    ```
 
-
-Notes (Athena-E)
-- Android app, install Android studio
-
-```
-# rebuild app, use
-npx react-native run-android
-```
-```
-# run python backend
-python app.py
-```
-- check api endpoint address and react development server address and modify if necessary
+- Check API endpoint address and react development server address and modify if necessary
 

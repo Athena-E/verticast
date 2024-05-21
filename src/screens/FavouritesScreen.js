@@ -28,9 +28,10 @@ const FavouritesScreen = ({navigation}) => {
     // method to force re-render on screen focus
     useCallback(() => {
       setIsScreenFocused(true);
-
+      setNotificationText('');
       return () => {
         setIsScreenFocused(false);
+        setNotificationText('');
       };
     }, []),
   );
@@ -57,6 +58,10 @@ const FavouritesScreen = ({navigation}) => {
     if (deletedId) {
       addFavourite(deletedId);
     }
+  };
+
+  const handleExploreClick = () => {
+    navigation.navigate('Search');
   };
 
   return (
@@ -95,6 +100,26 @@ const FavouritesScreen = ({navigation}) => {
               {/*sub heading*/}
               <Text style={favStyles.subTitleText}>Saved locations</Text>
             </View>
+            {favourites.length === 0 && (
+              <View style={favStyles.emptyLabel}>
+                <Text style={{fontSize: 20}}>{'No saved locations. '}</Text>
+                <TouchableOpacity
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                  onPress={handleExploreClick}>
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                      textDecorationLine: 'underline',
+                    }}>
+                    {'Get exploring!'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
             <View
               style={{
                 flex: 1,
@@ -154,6 +179,15 @@ const favStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1,
+    flexDirection: 'row',
+  },
+  emptyLabel: {
+    backgroundColor: 'rgba(255, 250, 235, 0.7)',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+    borderRadius: 10,
     flexDirection: 'row',
   },
 });
