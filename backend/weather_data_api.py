@@ -135,7 +135,7 @@ def on_load():
     global place_list
     place_list = load_file("climbing_spots.csv")
     onlyfiles = set([f for f in listdir(download_path) if isfile(join(download_path, f))])
-    print(onlyfiles)
+    # print(onlyfiles)
     now = datetime.datetime.now().timestamp()
     for place in place_list:
         fname = place.get_filename()
@@ -160,12 +160,12 @@ def get_place(name):
     return place
 
 
-def get_formatted_hourly_weather(name):
+def get_formatted_hourly_weather(name, day_offset):
     if name is None: name = "Ben Nevis"
     place = get_place(name)
     if place.hourly_weather is None:
         get_api_data(place)
-    today = datetime.datetime.now().day
+    today = datetime.datetime.now().day + day_offset
 
     hours_today = []
     for i in range(len(place.hourly_weather[0])):
@@ -186,7 +186,7 @@ def get_formatted_hourly_weather(name):
     return hours_today_obj
 
 
-def get_current_weather(name):
+def get_current_weather(name, day_offset):
     if name is None: name = "Ben Nevis"  # if no name passed in default to Ben Nevis
     # returns the data for current weather for frontend
     # dictionary with hourly_params as keys
@@ -194,7 +194,7 @@ def get_current_weather(name):
     if place.hourly_weather is None:
         get_api_data(place)
     now_hour = datetime.datetime.now().hour
-    today = datetime.datetime.now().day
+    today = datetime.datetime.now().day + day_offset
     for i in range(len(place.hourly_weather[0])):
         ts = datetime.datetime.fromtimestamp(place.hourly_weather[0][i])
         hour = ts.hour
@@ -227,7 +227,9 @@ if __name__ == "__main__":
     #         bn = p
     #         break
     # a = get_formatted_hourly_weather("Ben Nevis")
-    # b = get_current_weather("Ben Macdui")
+    # c = get_current_weather("Ben Nevis", 0)
+    # b = get_current_weather("Ben Nevis", 1)
+    # print(c)
     # print(b)
     # get_api_data("Ben Nevis")
     # download_from_name('Ben Nevis')

@@ -30,9 +30,11 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import WeatherRecWidget from '../components/WeatherRecWidget';
 import ScaleComponent from '../components/ScaleComponent';
 import ListWeatherData from '../components/ListWeatherData';
+import {useDayCount} from '../context/DayCountContext';
 
 const HomeScreen = () => {
   const {homeLocation} = useHomeLocation();
+  const {dayOffset, resetOffset} = useDayCount();
   const [backImgName, setBackImgName] = useState(
     require('../assets/backgrounds/light-background.jpg'),
   ); // set initial default background image
@@ -111,13 +113,13 @@ const HomeScreen = () => {
     React.useCallback(() => {
       const sendCurrentDataWithAPI = async () => {
         try {
-          const result = await sendCurrentWeatherReq(homeLocation);
+          const result = await sendCurrentWeatherReq(homeLocation, dayOffset);
           if (!('error' in result)) {
             setCurrentData(result);
           }
           setBackImgName(weatherBackgrounds[currentData.weather_code]);
           setNotificationText('');
-          console.log('CURRENT DATA:', homeLocation, currentData); // log API response for debugging
+          // console.log('CURRENT DATA', homeLocation, dayOffset, currentData); // log API response for debugging
         } catch (err) {
           console.log('send error', err.message);
         }
@@ -128,14 +130,15 @@ const HomeScreen = () => {
       return () => {
         setIsScreenFocused(false);
       };
-    }, [homeLocation]),
+    }, [homeLocation, dayOffset]),
   );
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     startAtTop();
-  //   }, []),
-  // );
+  useFocusEffect(
+    React.useCallback(() => {
+      startAtTop();
+      resetOffset();
+    }, []),
+  );
 
   const buttonToScreenCom = text => {
     // button to trigger notification for downloads on DateSelector component
@@ -181,7 +184,7 @@ const HomeScreen = () => {
               <SingleWeatherWidget
                 label="Wind Speed"
                 value={Math.round(currentData.wind_speed_180m)}
-                unit="mph"
+                unit="km/h"
               />
               <SingleWeatherWidget
                 label="Wind Direction"

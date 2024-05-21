@@ -3,6 +3,7 @@ import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {sendHourlyWeatherReq} from '../data/api_req';
 import {weatherIcons} from '../data/weatherCodes';
+import {useDayCount} from '../context/DayCountContext';
 
 // component for scrolling hourly weather on the main weather page
 
@@ -23,20 +24,22 @@ const HourlyWeatherDisplay = ({isScreenFocused, location}) => {
     {time: '11:00 PM', temperature_180m: '5', weather_code: 1},
   ];
   const [hourlyData, setHourlyData] = useState(hourlyDataTemp);
+  const {dayOffset} = useDayCount();
 
   useEffect(() => {
     const sendHourlyDataWithAPI = async () => {
       try {
-        const result = await sendHourlyWeatherReq(location);
+        const result = await sendHourlyWeatherReq(location, dayOffset);
         if (!('error' in result)) {
           setHourlyData(result);
         }
+        // console.log('HOURLY:', hourlyData);
       } catch (err) {
         console.log('send error', err.message);
       }
     };
     sendHourlyDataWithAPI();
-  }, [isScreenFocused, location]);
+  }, [isScreenFocused, location, dayOffset]);
 
   return (
     <View>

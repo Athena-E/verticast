@@ -21,8 +21,10 @@ def hourly_weather_data():
     try:
         data = request.json
         location_name = (data['locationName'])
+        day_offset = (data['dayOffset'])
         weather_data_api.on_load()
-        hourly_weather = weather_data_api.get_formatted_hourly_weather(location_name)
+        hourly_weather = weather_data_api.get_formatted_hourly_weather(location_name, day_offset)
+        print(hourly_weather)
         return jsonify(hourly_weather), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -32,8 +34,9 @@ def current_weather_data():
     try:
         data = request.json
         location_name = (data['locationName'])
+        day_offset = (data['dayOffset'])
         weather_data_api.on_load()
-        current_weather = weather_data_api.get_current_weather(location_name)
+        current_weather = weather_data_api.get_current_weather(location_name, day_offset)
         print(current_weather)
         return jsonify(current_weather), 200
     except Exception as e:

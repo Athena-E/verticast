@@ -1,8 +1,10 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useNotification} from '../context/NotificationContext';
 import {sendDownloadReq} from '../data/api_req';
+import {useDayCount} from '../context/DayCountContext';
+import {useFocusEffect} from '@react-navigation/native';
 
 // Component for selecting the date on a location's weather page
 // Includes download button
@@ -22,6 +24,23 @@ const DateSelectorDisplay = ({buttonToScreenCom, isHome = true, location}) => {
   }); // set tomorrow's date
   const [isDownloaded, setIsDownloaded] = useState(false);
   const {showNotification} = useNotification();
+  const {changeOffset} = useDayCount();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setCurrentDate(new Date());
+      setPreviousDate(() => {
+        const previous = new Date(currentDate);
+        previous.setDate(previous.getDate() - 1);
+        return previous;
+      });
+      setNextDate(() => {
+        const next = new Date(currentDate);
+        next.setDate(next.getDate() + 1);
+        return next;
+      });
+    }, []),
+  );
 
   const formatLongDate = date => {
     // return date as string unless current date is the same as today's date
@@ -51,6 +70,7 @@ const DateSelectorDisplay = ({buttonToScreenCom, isHome = true, location}) => {
     setNextDate(currentDate);
     setCurrentDate(previousDate);
     setPreviousDate(new Date(newPreviousDay));
+    changeOffset(-1);
   };
 
   const goToNextDay = () => {
@@ -60,6 +80,7 @@ const DateSelectorDisplay = ({buttonToScreenCom, isHome = true, location}) => {
     setPreviousDate(currentDate);
     setCurrentDate(nextDate);
     setNextDate(new Date(newNextDay));
+    changeOffset(1);
   };
 
   const onDownloadPress = () => {

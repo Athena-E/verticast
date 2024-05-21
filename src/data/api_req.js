@@ -15,7 +15,7 @@ const fetchReq = async () => {
   }
 };
 
-const postHourlyReq = async location => {
+const postHourlyReq = async (location, dayOffset) => {
   // post request to return hourly weather data
   try {
     const response = await fetch('http://10.0.2.2:5000/api/hourly_weather', {
@@ -25,6 +25,7 @@ const postHourlyReq = async location => {
       },
       body: JSON.stringify({
         locationName: location,
+        dayOffset: dayOffset,
       }),
     });
     return await response.json();
@@ -33,7 +34,7 @@ const postHourlyReq = async location => {
   }
 };
 
-const postCurrentReq = async location => {
+const postCurrentReq = async (location, dayOffset) => {
   // post request to return current weather data
   try {
     const response = await fetch('http://10.0.2.2:5000/api/current_weather', {
@@ -43,6 +44,7 @@ const postCurrentReq = async location => {
       },
       body: JSON.stringify({
         locationName: location,
+        dayOffset: dayOffset,
       }),
     });
     return await response.json();
@@ -69,7 +71,9 @@ const postDownloadReq = async location => {
   }
 };
 
-export const sendHourlyWeatherReq = location => postHourlyReq(location);
+export const sendHourlyWeatherReq = (location, dayOffset) =>
+  postHourlyReq(location, dayOffset);
 export const fetchWeatherData = () => fetchReq();
-export const sendCurrentWeatherReq = location => postCurrentReq(location);
+export const sendCurrentWeatherReq = (location, dayOffset) =>
+  postCurrentReq(location, dayOffset);
 export const sendDownloadReq = location => postDownloadReq(location);

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   ImageBackground,
   View,
@@ -17,11 +17,13 @@ import {sendCurrentWeatherReq} from '../data/api_req';
 import {weatherBackgrounds} from '../data/weatherCodes';
 import {useNotification} from '../context/NotificationContext';
 import {useFocusEffect} from '@react-navigation/native';
+import {useDayCount} from '../context/DayCountContext';
 
 const WeatherLocationScreen = ({route, navigation}) => {
   // Structure: Date selector, Big temperature + location, Weather widgets, Hourly weather scrollbar
   const {favourites, addFavourite, removeFavourite} = useFavourites();
   const {id, location} = route.params;
+  const {dayOffset, resetOffset} = useDayCount();
   const [isScreenFocused, setIsScreenFocused] = useState(false);
   const [backImgName, setBackImgName] = useState(
     require('../assets/backgrounds/light-background.jpg'),
@@ -41,7 +43,7 @@ const WeatherLocationScreen = ({route, navigation}) => {
     React.useCallback(() => {
       const sendCurrentDataWithAPI = async () => {
         try {
-          const result = await sendCurrentWeatherReq(location);
+          const result = await sendCurrentWeatherReq(location, dayOffset);
           if (!('error' in result)) {
             setCurrentData(result);
           }
@@ -58,7 +60,13 @@ const WeatherLocationScreen = ({route, navigation}) => {
       return () => {
         setIsScreenFocused(false);
       };
-    }, [location]),
+    }, [location, dayOffset]),
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      resetOffset();
+    }, []),
   );
 
   const onBackClick = () => {
@@ -106,7 +114,7 @@ const WeatherLocationScreen = ({route, navigation}) => {
             <SingleWeatherWidget
               label="Wind Speed"
               value={Math.round(currentData.wind_speed_180m)}
-              unit="mph"
+              unit="km/h"
             />
             <SingleWeatherWidget
               label="Wind Direction"
